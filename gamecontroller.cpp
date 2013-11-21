@@ -25,13 +25,13 @@ void GC::drawScene() {
 }
 
 void GC::run() {
-    while(cq.size() == 0 || cq[0] != int('e') && cq[0] != int('q')) {
+    while (cq.size() != 0 && cq[0] != int('e') && cq[0] != int('q')) {
         while (cq.size() > 0) {
             handle(cq[0]);
             cq.erase(cq.begin());
         }
 
-        state.tic();
+//        state.tic();
         drawScene();
     }
 }
