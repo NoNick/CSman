@@ -1,6 +1,8 @@
 #include "draw.h"
 
-Draw::Draw()
+Draw::Draw(int w, int h)
 {
+    width = w;
+    height = h;
 }
 
