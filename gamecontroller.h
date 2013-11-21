@@ -7,7 +7,7 @@
 class GC
 {
 public:
-    GC();
+    GC(State st);
     void run();
     void setControl();
 
