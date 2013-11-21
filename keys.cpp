@@ -1,0 +1,10 @@
+#define UP 65
+#define DOWN 66
+#define RIGHT 67
+#define LEFT 68
+#define SPACE 32
+#define ENTER 10
+#define BACKSPACE1 8
+#define BACKSPACE2 127
+#define TAB 9
+#define ESC 27
