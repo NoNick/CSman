@@ -6,13 +6,11 @@
 class Player
 {
 public:
-    Player();
-
-private:
-    std::pair <double, double> pos, mov;
+    Player(const char *path, std::pair <double, double> p);
+    std::pair <double, double> pos, mov, jump;
     std::pair <int, int> size;
-    std::vector <std::string> texture;
-    int hp, melee, ranged;
+    std::vector < std::vector <std::string> > texture;
+    int hp, melee, ranged, nFrames;
 };
 
 #endif // PLAYER_H

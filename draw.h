@@ -1,17 +1,18 @@
 #ifndef DRAW_H
 #define DRAW_H
-#include "block.cpp"
-
+#include "drawBlock.h"
 
 class Draw
 {
 public:
-    Draw(int h, int w);
-    void setBlock(block b);
+    Draw(int w, int h);
+    void setBlock(drawBlock b);
     void writeBuf();
 
 private:
     int height, width;
+    char **buf;
+    void clearBuf();
 };
 
 #endif // DRAW_H
