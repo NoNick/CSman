@@ -10,7 +10,7 @@ class State
 public:
     State();
     void move(std::pair <double, double> d);
-    void jump(Player *player);
+    void jump(int playerID);
     void tic();
     void shoot(Player *shooter);
     void setLevelMap(LevelMap *map);
@@ -22,7 +22,9 @@ public:
 
 private:
     bool isOnBlock(Player p);
+    bool isUnderBlock(Player p);
     bool isBlockBeside(Player p);
+    int jumpLng, goLng;
 };
 
 #endif // STATE_H

@@ -1,6 +1,7 @@
 #include "state.h"
 #include "levelmap.h"
 #include "mapBlock.h"
+#include <fstream>
 
 State::State() {
     Player p = Player("./player", std::make_pair(0, 0));
@@ -19,6 +20,24 @@ bool State::isOnBlock(Player p) {
     for (int i = 0; i < m->blocks.size(); i++) {
         b = m->blocks[i];
         if (b.begin.first == y &&
+           (std::min(b.begin.second, b.end.second) <= x2 &&
+            std::max(b.begin.second, b.end.second) >= x1))
+            return true;
+    }
+
+    return false;
+}
+
+bool State::isUnderBlock(Player p) {
+    int y = (int)p.pos.second, x1 = (int)p.pos.first,
+        x2 = (int)p.pos.first + p.size.first;
+    mapBlock b;
+
+    std::ofstream fout("./debug");
+
+    for (int i = 0; i < m->blocks.size(); i++) {
+        b = m->blocks[i];
+        if (b.end.first == y + 1 &&
            (std::min(b.begin.second, b.end.second) <= x2 &&
             std::max(b.begin.second, b.end.second) >= x1))
             return true;
@@ -53,8 +72,22 @@ void State::move(std::pair<double, double> d) {
         players[0].pos.first -= d.first * players[0].mov.first;
 }
 
+void State::jump(int playerID) {
+    if (isOnBlock(players[0]))
+        players[playerID].jump = players[playerID].mov.second;
+}
+
 void State::tic() {
-    if (!isOnBlock(players[0]))
+    if (!isOnBlock(players[0]) && players[0].jump <= 0)
         players[0].pos.second += 1;
+
+    if (players[0].jump > 0) {
+        players[0].pos.second--;
+        players[0].jump--;
+        if (isUnderBlock(players[0]) || players[0].pos.second <= 0) {
+            players[0].pos.second++;
+            players[0].jump = 0;
+        }
+    }
 
 }

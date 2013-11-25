@@ -29,6 +29,9 @@ void GC::handle(int c) {
     case LEFT:
         state->move(std::make_pair(-1, 0));
         break;
+    case SPACE:
+        state->jump(0);
+        break;
     }
 }
 

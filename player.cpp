@@ -15,8 +15,9 @@ Player::Player(const char *path, std::pair <double, double> p)
 
     pos = p;
     std::ifstream fin(path);
-    fin >> hp >> melee >> ranged >> mov.first >> mov.second >> jump.first >> jump.second;
+    fin >> hp >> melee >> ranged >> mov.first >> mov.second;
     fin >> nFrames >> size.first >> size.second;
+    jump = 0;
 
     char next;
     while(fin.get(next))
