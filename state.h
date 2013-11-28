@@ -24,7 +24,7 @@ private:
     bool isOnBlock(Player p);
     bool isUnderBlock(Player p);
     bool isBlockBeside(Player p);
-    int jumpLng, goLng;
+    int jumpLng, goLng, goLngMAX;
 };
 
 #endif // STATE_H

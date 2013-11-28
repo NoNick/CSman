@@ -6,6 +6,7 @@
 State::State() {
     Player p = Player("./player", std::make_pair(0, 0));
     players.push_back(p);
+    goLngMAX = 5;
 }
 
 void State::setLevelMap(LevelMap *map) {
@@ -19,9 +20,9 @@ bool State::isOnBlock(Player p) {
 
     for (int i = 0; i < m->blocks.size(); i++) {
         b = m->blocks[i];
-        if (b.begin.first == y &&
-           (std::min(b.begin.second, b.end.second) <= x2 &&
-            std::max(b.begin.second, b.end.second) >= x1))
+        if (b.begin.second == y &&
+           (std::min(b.begin.first, b.end.first) <= x2 &&
+            std::max(b.begin.first, b.end.first) >= x1))
             return true;
     }
 
@@ -33,13 +34,11 @@ bool State::isUnderBlock(Player p) {
         x2 = (int)p.pos.first + p.size.first;
     mapBlock b;
 
-    std::ofstream fout("./debug");
-
     for (int i = 0; i < m->blocks.size(); i++) {
         b = m->blocks[i];
-        if (b.end.first == y + 1 &&
-           (std::min(b.begin.second, b.end.second) <= x2 &&
-            std::max(b.begin.second, b.end.second) >= x1))
+        if (b.end.second == y + 1 &&
+           (std::min(b.begin.first, b.end.first) <= x2 &&
+            std::max(b.begin.first, b.end.first) >= x1))
             return true;
     }
 
@@ -53,10 +52,10 @@ bool State::isBlockBeside(Player p) {
 
     for (int i = 0; i < m->blocks.size(); i++) {
         b = m->blocks[i];
-        if ((std::min(b.begin.first, b.end.first) < y2 &&
-             std::max(b.begin.first, b.end.first) > y1) &&
-           (std::min(b.begin.second, b.end.second) <= x2 &&
-            std::max(b.begin.second, b.end.second) >= x1))
+        if ((std::min(b.begin.second, b.end.second) < y2 &&
+             std::max(b.begin.second, b.end.second) > y1) &&
+           (std::min(b.begin.first, b.end.first) <= x2 &&
+            std::max(b.begin.first, b.end.first) >= x1))
             return true;
     }
 
@@ -64,17 +63,24 @@ bool State::isBlockBeside(Player p) {
 }
 
 void State::move(std::pair<double, double> d) {
-    players[0].pos.first += d.first * players[0].mov.first;
-    if (players[0].pos.first < 0)
-        players[0].pos.first = 0;
+    if (isOnBlock(players[0]) || goLng > 0) {
+        if (goLng > 0)
+            goLng--;
 
-    if (isBlockBeside(players[0]))
-        players[0].pos.first -= d.first * players[0].mov.first;
+        players[0].pos.first += d.first * players[0].mov.first;
+        if (players[0].pos.first < 0)
+            players[0].pos.first = 0;
+
+        if (isBlockBeside(players[0]))
+            players[0].pos.first -= d.first * players[0].mov.first;
+    }
 }
 
 void State::jump(int playerID) {
-    if (isOnBlock(players[0]))
+    if (isOnBlock(players[0])) {
         players[playerID].jump = players[playerID].mov.second;
+        goLng = goLngMAX;
+    }
 }
 
 void State::tic() {

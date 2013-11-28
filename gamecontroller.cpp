@@ -41,9 +41,10 @@ void GC::drawScene() {
 
     for (int i = 0; i < m->blocks.size(); i++) {
         b = m->blocks[i];
-        if (b.begin.first < end.first && b.begin.second < end.second) {
-            out.begin = std::make_pair(b.begin.second, b.begin.first);
-            out.end = std::make_pair(std::min(b.end.second, end.second), std::min(b.end.first, end.first));
+        if ((b.begin.first < end.first && b.begin.second < end.second) &&
+                (b.end.first > begin.first && b.end.second > begin.second)) {
+            out.begin = std::make_pair(std::max(b.begin.first - begin.first, 0), std::max(b.begin.second - begin.second, 0));
+            out.end = std::make_pair(b.end.first - begin.first, b.end.second - begin.second);
             out.texture = b.tex->data;
             draw->setBlock(out);
         }
@@ -58,7 +59,7 @@ void GC::drawScene() {
 
     draw->writeBuf();
 
-    usleep(250000);
+    usleep(125000);
 }
 
 void GC::run() {
@@ -76,10 +77,34 @@ void GC::run() {
             playerTact %= state->players[0].texture.size();
         }
         state->tic();
+        scroll();
         drawScene();
     }
 
     std::cout << "\x1b[H\x1b[J";
+}
+
+void GC::scroll() {
+    std::pair <int, int> size = std::make_pair(end.first - begin.first, end.second - begin.second),
+            player = std::make_pair((int)state->players[0].pos.first, (int)state->players[0].pos.second);
+
+    if (player.first < begin.first + (end.first - begin.first) / 3) {
+        begin.first = std::max(player.first - size.first / 3, 0);
+        end.first = begin.first + size.first;
+    }
+    else if (player.first > end.first - (end.first - begin.first) / 3) {
+        end.first = std::min(player.first + size.first / 3, 100);
+        begin.first = end.first - size.first;
+    }
+
+    if (player.second < begin.second + (end.second - begin.second) / 3) {
+        begin.second = std::max(player.second - size.second / 3, 0);
+        end.second = begin.second + size.second;
+    }
+    else if (player.second > end.second - (end.second - begin.second) / 3) {
+        end.second = std::min(player.second + size.second / 3, 100);
+        begin.second = end.second - size.second;
+    }
 }
 
 int GC::getch() {

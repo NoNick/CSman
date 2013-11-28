@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     player.cpp \
     pellet.cpp \
     texture.cpp \
-    mapBlock.cpp
+    mapBlock.cpp \
+    status.cpp
 
 HEADERS += \
     levelmap.h \
@@ -29,5 +30,6 @@ HEADERS += \
     pellet.h \
     mapBlock.h \
     drawBlock.h \
-    texture.h
+    texture.h \
+    status.h
 

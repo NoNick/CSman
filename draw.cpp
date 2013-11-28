@@ -51,6 +51,10 @@ void Draw::setBlock(drawBlock b) {
     }
 }
 
+void Draw::setStatus(Status s) {
+    st = s;
+}
+
 void Draw::writeBuf() {
     std::cout << "\x1b[H";
 

@@ -16,6 +16,7 @@ private:
     int getch();
     void handle(int c);
     void drawScene();
+    void scroll();
     LevelMap *m;
     State *state;
     Draw *draw;
