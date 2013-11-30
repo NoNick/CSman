@@ -11,6 +11,7 @@ public:
     std::pair <int, int> size;
     std::vector < std::vector <std::string> > texture;
     int hp, melee, ranged, nFrames, jump;
+    std::string pelletPath;
 };
 
 #endif // PLAYER_H

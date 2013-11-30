@@ -14,6 +14,7 @@ public:
     void tic();
     void shoot(Player *shooter);
     void setLevelMap(LevelMap *map);
+    void throwPellet(Player *p);
 
     std::vector <Player> players;
     std::vector <Pellet> pellets;
@@ -24,6 +25,7 @@ private:
     bool isOnBlock(Player p);
     bool isUnderBlock(Player p);
     bool isBlockBeside(Player p);
+    bool handlePellet(Pellet *p);
     int jumpLng, goLng, goLngMAX;
 };
 

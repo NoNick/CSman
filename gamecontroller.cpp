@@ -32,6 +32,9 @@ void GC::handle(int c) {
     case SPACE:
         state->jump(0);
         break;
+    case TAB:
+        state->throwPellet(&state->players[0]);
+        break;
     }
 }
 
@@ -50,15 +53,34 @@ void GC::drawScene() {
         }
     }
 
-    out.begin = std::make_pair((int)state->players[0].pos.first - begin.first,
-                            (int)state->players[0].pos.second - begin.second);
-    out.end = std::make_pair(out.begin.first + state->players[0].size.first,
-                            out.begin.second + state->players[0].size.second);
-    out.texture = state->players[0].texture[playerTact];
-    draw->setBlock(out);
+    Pellet p;
+    for (int i = 0; i < state->pellets.size(); i++) {
+        p = state->pellets[i];
+        if (((int)p.pos.first < end.first && (int)p.pos.second < end.second) &&
+                ((int)p.pos.first > begin.first && (int)p.pos.second > begin.second)) {
+            out.begin = std::make_pair(std::max((int)p.pos.first - begin.first, 0), std::max((int)p.pos.second - begin.second, 0));
+            out.end = std::make_pair((int)p.pos.first + p.size.first - begin.first, (int)p.pos.second + p.size.second - begin.second);
+            out.texture = p.texture[worldTact % p.nFrames];
+            draw->setBlock(out);
+        }
+    }
+
+
+    for (int i = 0; i < state->players.size(); i++) {
+        out.begin = std::make_pair((int)state->players[i].pos.first - begin.first,
+                                (int)state->players[i].pos.second - begin.second);
+        out.end = std::make_pair(out.begin.first + state->players[i].size.first,
+                                out.begin.second + state->players[i].size.second);
+        if (i == 0)
+            out.texture = state->players[i].texture[playerTact];
+        else
+            out.texture = state->players[i].texture[worldTact];
+        draw->setBlock(out);
+    }
 
     draw->writeBuf();
 
+    worldTact++;
     usleep(125000);
 }
 
@@ -93,7 +115,7 @@ void GC::scroll() {
         end.first = begin.first + size.first;
     }
     else if (player.first > end.first - (end.first - begin.first) / 3) {
-        end.first = std::min(player.first + size.first / 3, 100);
+        end.first = std::min(player.first + size.first / 3, m->mapEnd.first);
         begin.first = end.first - size.first;
     }
 
@@ -102,7 +124,7 @@ void GC::scroll() {
         end.second = begin.second + size.second;
     }
     else if (player.second > end.second - (end.second - begin.second) / 3) {
-        end.second = std::min(player.second + size.second / 3, 100);
+        end.second = std::min(player.second + size.second / 3, m->mapEnd.second);
         begin.second = end.second - size.second;
     }
 }

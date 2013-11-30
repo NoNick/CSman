@@ -46,12 +46,17 @@ void LevelMap::loadBlocks(const char *path) {
     std::ifstream fin(path);
     int n, id;
     std::pair <int, int> begin, end;
+    mapEnd = std::make_pair(0, 0);
     double hpBal;
     fin >> n;
     for (int i = 0; i < n; i++) {
         fin >> begin.first >> begin.second >> end.first >> end.second >> hpBal >> id;
+        if (end.first > mapEnd.first && end.second > mapEnd.second)
+            mapEnd = end;
         blocks.push_back(mapBlock(begin, end, hpBal, &(texs[id])));
     }
+    mapEnd.first++;
+    mapEnd.second++;
 }
 
 LevelMap::LevelMap(const char *pathTex, const char *pathBlock)

@@ -11,6 +11,7 @@ public:
     std::vector <mapBlock> getBlocks(std::pair <int, int> begin, std::pair <int, int> end);
     std::vector <mapBlock> blocks;
     std::vector <texture> texs;
+    std::pair <int, int> mapEnd;
 
 private:
     void loadTextures(const char *path);

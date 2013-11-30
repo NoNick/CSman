@@ -10,9 +10,9 @@ public:
     void setBlock(drawBlock b);
     void setStatus(Status s);
     void writeBuf();
+    int height, width;
 
 private:
-    int height, width;
     char **buf;
     void clearBuf();
     Status st;
