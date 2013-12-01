@@ -36,4 +36,6 @@ Player::Player(const char *path, std::pair <double, double> p)
             texture[i].push_back(tmp);
         }
     }
+
+    right = true;
 }

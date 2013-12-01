@@ -25,9 +25,11 @@ void GC::handle(int c) {
     switch(c) {
     case RIGHT:
         state->move(std::make_pair(1, 0));
+        state->players[0].right = true;
         break;
     case LEFT:
         state->move(std::make_pair(-1, 0));
+        state->players[0].right = false;
         break;
     case SPACE:
         state->jump(0);
@@ -71,6 +73,13 @@ void GC::drawScene() {
                                 (int)state->players[i].pos.second - begin.second);
         out.end = std::make_pair(out.begin.first + state->players[i].size.first,
                                 out.begin.second + state->players[i].size.second);
+        if (!state->players[i].right) {
+            int tmp = out.begin.first;
+            out.begin.first = out.end.first;
+            out.end.first = tmp;
+        }
+
+
         if (i == 0)
             out.texture = state->players[i].texture[playerTact];
         else

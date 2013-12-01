@@ -19,8 +19,15 @@ void State::setLevelMap(LevelMap *map) {
 void State::throwPellet(Player *p) {
     Pellet pel(p->pelletPath.c_str());
     pel.parent = p;
-    pel.pos = std::make_pair(p->pos.first + p->size.first,
+    if (p->right) {
+        pel.pos = std::make_pair(p->pos.first + p->size.first,
                              p->pos.second + p->size.second / 2);
+    }
+    else {
+        pel.pos = std::make_pair(p->pos.first,
+                                 p->pos.second + p->size.second / 2);
+        pel.mov.first *= -1;
+    }
     pel.timeLeft = pel.timeLeftMax;
     pellets.push_back(pel);
 }
