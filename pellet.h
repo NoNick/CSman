@@ -4,6 +4,7 @@
 #include <string>
 #include "player.h"
 
+// just a data type
 class Pellet
 {
 public:

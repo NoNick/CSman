@@ -3,15 +3,17 @@
 #include <vector>
 #include <string>
 
+// just a data type
 class Player
 {
 public:
+    Player();
     Player(const char *path, std::pair <double, double> p);
     std::pair <double, double> pos, mov;
     std::pair <int, int> size;
     std::vector < std::vector <std::string> > texture;
     std::string pelletPath;
-    int hp, melee, ranged, nFrames, jump;
+    int hp, melee, ranged, nFrames, jump, goLng;
     // if player looks right
     bool right;
 };

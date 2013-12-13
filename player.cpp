@@ -2,10 +2,13 @@
 #include <fstream>
 #include <iostream>
 
+Player::Player() {
+}
+
 Player::Player(const char *path, std::pair <double, double> p)
 {
     /* Read player data in following format:
-     * (hp) (melee damage) (ranged damage) (movement speed x) (movement speed y) (jump x) (jump y)
+     * (hp) (melee damage) (ranged damage) (movement speed x) (movement speed y) (jump y)
      * (path to pellet data file)
      * (number of animation frames) (width of frame) (height of frame)
      *
@@ -17,11 +20,14 @@ Player::Player(const char *path, std::pair <double, double> p)
     pos = p;
     std::ifstream fin(path);
     fin >> hp >> melee >> ranged >> mov.first >> mov.second;
-    fin >> pelletPath;
+    char next;
+    while(fin.get(next))
+        if (next == '\n')
+            break;
+    std::getline(fin, pelletPath);
     fin >> nFrames >> size.first >> size.second;
     jump = 0;
 
-    char next;
     while(fin.get(next))
         if (next == '\n')
             break;

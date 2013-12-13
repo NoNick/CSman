@@ -40,11 +40,13 @@ void GC::handle(int c) {
     }
 }
 
+// send blocks (drawBlock) data into draw class
 void GC::drawScene() {
     drawBlock out;
     mapBlock b;
 
-    for (int i = 0; i < m->blocks.size(); i++) {
+    // let's draw mapBlocks!
+    for (unsigned int i = 0; i < m->blocks.size(); i++) {
         b = m->blocks[i];
         if ((b.begin.first < end.first && b.begin.second < end.second) &&
                 (b.end.first > begin.first && b.end.second > begin.second)) {
@@ -55,8 +57,9 @@ void GC::drawScene() {
         }
     }
 
+    // let's draw pellets!
     Pellet p;
-    for (int i = 0; i < state->pellets.size(); i++) {
+    for (unsigned int i = 0; i < state->pellets.size(); i++) {
         p = state->pellets[i];
         if (((int)p.pos.first < end.first && (int)p.pos.second < end.second) &&
                 ((int)p.pos.first > begin.first && (int)p.pos.second > begin.second)) {
@@ -67,42 +70,47 @@ void GC::drawScene() {
         }
     }
 
+    // let's draw player & mobs!
+    Player pl;
+    for (unsigned int i = 0; i < state->players.size(); i++) {
+        pl = state->players[i];
+        if (((int)pl.pos.first < end.first && (int)pl.pos.second < end.second) &&
+                ((int)pl.pos.first >= begin.first && (int)pl.pos.second >= begin.second)) {
+            out.begin = std::make_pair((int)pl.pos.first - begin.first,
+                                    (int)pl.pos.second - begin.second);
+            out.end = std::make_pair(out.begin.first + pl.size.first,
+                                    out.begin.second + pl.size.second);
+            if (!pl.right) {
+                int tmp = out.begin.first;
+                out.begin.first = out.end.first;
+                out.end.first = tmp;
+            }
 
-    for (int i = 0; i < state->players.size(); i++) {
-        out.begin = std::make_pair((int)state->players[i].pos.first - begin.first,
-                                (int)state->players[i].pos.second - begin.second);
-        out.end = std::make_pair(out.begin.first + state->players[i].size.first,
-                                out.begin.second + state->players[i].size.second);
-        if (!state->players[i].right) {
-            int tmp = out.begin.first;
-            out.begin.first = out.end.first;
-            out.end.first = tmp;
+            if (i == 0)
+                out.texture = pl.texture[playerTact];
+            else
+                out.texture = pl.texture[worldTact % state->players[i].texture.size()];
+            draw->setBlock(out);
         }
-
-
-        if (i == 0)
-            out.texture = state->players[i].texture[playerTact];
-        else
-            out.texture = state->players[i].texture[worldTact];
-        draw->setBlock(out);
     }
 
     draw->writeBuf();
 
     worldTact++;
-    usleep(125000);
 }
 
 void GC::run() {
     bool activity;
     while (cq.size() == 0 || (cq[0] != int('e') && cq[0] != int('q'))) {
         activity = false;
+        // cq contains recieved from other thread data
         while (cq.size() > 0) {
             handle(cq[0]);
             cq.erase(cq.begin());
             activity = true;
         }
 
+        // player changes texture only if he was moving
         if (activity) {
             playerTact++;
             playerTact %= state->players[0].texture.size();
@@ -110,11 +118,16 @@ void GC::run() {
         state->tic();
         scroll();
         drawScene();
+        usleep(100000);
     }
 
     std::cout << "\x1b[H\x1b[J";
 }
 
+// scroll map using setting offset (begin) and end of drawble area (end)
+// player coords must be in center (begin + (end - begin) / 3; end - (end - begin) / 3)
+//                                  OR
+// end of drawble area is end of map OR begin of drawble area is begin of map
 void GC::scroll() {
     std::pair <int, int> size = std::make_pair(end.first - begin.first, end.second - begin.second),
             player = std::make_pair((int)state->players[0].pos.first, (int)state->players[0].pos.second);
@@ -150,6 +163,7 @@ int GC::getch() {
     return ch;
 }
 
+// thread for getting controls from player
 void GC::setControl() {
     int c;
     do {

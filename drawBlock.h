@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+// just a data type
 struct drawBlock {
     std::pair <int, int> begin, end;
     std::vector <std::string> texture;

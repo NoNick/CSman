@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 
+// just a data type
 class texture
 {
 public:

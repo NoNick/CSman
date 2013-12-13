@@ -2,6 +2,7 @@
 #define MAPBLOCK_H
 #include "texture.h"
 
+// just a data type
 struct mapBlock {
     mapBlock();
     mapBlock(std::pair <int, int> b, std::pair <int, int> e,

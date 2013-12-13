@@ -1,6 +1,7 @@
 #ifndef STATUS_H
 #define STATUS_H
 
+// just a data type
 class Status
 {
 public:
