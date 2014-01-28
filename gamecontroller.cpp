@@ -76,6 +76,10 @@ void GC::drawScene() {
         pl = state->players[i];
         if (((int)pl.pos.first < end.first && (int)pl.pos.second < end.second) &&
                 ((int)pl.pos.first >= begin.first && (int)pl.pos.second >= begin.second)) {
+            // if we'll draw mob, he must be active
+            if (i > 0)
+                state->setActive(i - 1, true);
+
             out.begin = std::make_pair((int)pl.pos.first - begin.first,
                                     (int)pl.pos.second - begin.second);
             out.end = std::make_pair(out.begin.first + pl.size.first,
@@ -92,6 +96,9 @@ void GC::drawScene() {
                 out.texture = pl.texture[worldTact % state->players[i].texture.size()];
             draw->setBlock(out);
         }
+        // if we'll not draw mob, he must be inactive
+        else if (i > 0)
+            state->setActive(i, false);
     }
 
     draw->writeBuf();

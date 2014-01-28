@@ -8,7 +8,7 @@ Player::Player() {
 Player::Player(const char *path, std::pair <double, double> p)
 {
     /* Read player data in following format:
-     * (hp) (melee damage) (ranged damage) (movement speed x) (movement speed y) (jump y)
+     * (hp) (melee damage) (ranged damage) (movement speed x) (height of jump/num of movements in jump)
      * (path to pellet data file)
      * (number of animation frames) (width of frame) (height of frame)
      *

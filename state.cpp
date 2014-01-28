@@ -7,6 +7,8 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <stdlib.h>
+#include <time.h>
 
 State::State() {
     Player p = Player("./player", std::make_pair(0, 0));
@@ -28,26 +30,27 @@ void State::loadMobs(const char *path) {
      *         (point x) (point y)
      */
 
+    srand(time(NULL));
     std::ifstream fin(path);
     std::string s;
-    std::vector <std::pair <int, int> > tmp1;
+    pathState tmp;
     std::pair <int, int> tmp2;
     int n, m;
     fin >> n;
     for (int i = 0; i < n; i++) {
-        tmp1.clear();
+        tmp.path.clear();
         fin >> s >> m;
         for (int j = 0; j < m; j++) {
             fin >> tmp2.first >> tmp2.second;
-            tmp1.push_back(tmp2);
+            tmp.path.push_back(tmp2);
         }
 
         if (m > 0) {
-            players.push_back(Player(s.c_str(), tmp1[0]));
-            mobPath.push_back(tmp1);
-            tmp1.clear();
-            currPath.push_back(tmp1);
-            mobPlace.push_back(0);
+            tmp.isOnPath = true;
+            tmp.pathIndex = rand() % m;
+            tmp.isActive = false;
+            players.push_back(Player(s.c_str(), tmp.path[tmp.pathIndex]));
+            mob.push_back(tmp);
         }
     }
 }
@@ -162,7 +165,7 @@ void State::move(std::pair<double, double> d) {
 }
 
 void State::jump(int playerID) {
-    if (isOnBlock(&players[0])) {
+    if (isOnBlock(&players[playerID])) {
         players[playerID].jump = players[playerID].mov.second;
         players[playerID].goLng = players[playerID].jump;
     }
@@ -259,6 +262,10 @@ bool State::handlePellet(Pellet *p) {
     return false;
 }
 
+void State::setActive(int i, bool var){
+    mob[i].isActive = var;
+}
+
 void State::gravity(Player *p) {
     if (!isOnBlock(p) && p->jump <= 0)
         p->pos.second += 1;
@@ -274,20 +281,27 @@ void State::gravity(Player *p) {
 }
 
 void State::tic() {
-    for (unsigned int i = 0; i < players.size(); i++) {
-        gravity(&players[i]);
-        // findPath will crash everything if uncomment it
-/*        if (i > 0 && currPath[i - 1].size() == 0) {
-            // if mobPlace[i] > 0: moving forward
-            // if mobPlace[i] < 0: moving back
-            if (mobPlace[i - 1] + 1 >= mobPath[i - 1].size())
-                mobPlace[i - 1] = -mobPath[i - 1].size() + 1;
-            if (mobPlace[i - 1] + 1 == 0)
-                mobPlace[i - 1] = 0;
-            currPath[i - 1] = findPath(mobPath[i - 1][(int)std::abs(mobPlace[i - 1])],
-                    mobPath[i - 1][(int)std::abs(mobPlace[i - 1] + 1)], players[i]);
-            mobPlace[i - 1]++;
-        }*/
+    gravity(&players[0]);
+    for (unsigned int i = 0; i < players.size() - 1; i++) {
+        if (mob[i].isActive) {
+            // TODO: chase player if can see him
+            // TODO: find path if mob isn't on it
+            // TODO: find path if mob can't go
+            if (mob[i].isOnPath) {
+                players[i + 1].pos = mob[i].path[(mob[i].pathIndex + 1) % mob[i].path.size()];
+                if (!isBlockBeside(&players[i + 1])) {
+                    if (mob[i].path[mob[i].pathIndex].first - players[i + 1].pos.first < 0)
+                        players[i + 1].right = true;
+                    else if (mob[i].path[mob[i].pathIndex].first - players[i + 1].pos.first > 0)
+                        players[i + 1].right = false;
+
+                    mob[i].pathIndex++;
+                    mob[i].pathIndex %= mob[i].path.size();
+                }
+                else
+                    players[i + 1].pos = mob[i].path[mob[i].pathIndex];
+            }
+        }
     }
 
     for (unsigned int i = 0; i < pellets.size(); i++) {

@@ -21,12 +21,27 @@ public:
     // p throws a new pellet (create a new pellet using player's data)
     void throwPellet(Player *p);
 
+    // set mob (#i) active or inactive
+    void setActive(int i, bool var);
+
     std::vector <Player> players;
     std::vector <Pellet> pellets;
 
     LevelMap *m;
 
 private:
+    struct pathState {
+        // const path
+        std::vector < std::pair <int, int> > path;
+        // isActive is true if player can see object;
+        // if isActive is true mob changes coordinates and might chase player
+        // isOnPath is true if mob's coords is one of path vector
+        bool isActive, isOnPath;
+        // if isOnPath is true, path[pathIndex] is mob's position
+        int pathIndex;
+        // if isOnPath is false, player[i].pos is mob's position
+    };
+
     // it's all about player & blocks positions
     bool isOnBlock(Player *p);
     bool isUnderBlock(Player *p);
@@ -38,13 +53,8 @@ private:
     // move player up/down (if he isn't on a block)
     // end player's jump if he's on a block
     void gravity(Player *p);
-    // TODO: it's not working
-    // calculate path from one point to another for player p using bfs
-    std::vector < std::pair <int, int> > findPath(std::pair <int, int> source,
-                                        std::pair <int, int> target, Player p);
 
-    std::vector < std::vector <std::pair <int, int> > > mobPath, currPath;
-    std::vector <int> mobPlace;
+    std::vector <pathState> mob;
 };
 
 #endif // STATE_H

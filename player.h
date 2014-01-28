@@ -8,6 +8,7 @@ class Player
 {
 public:
     Player();
+    // p is initial position
     Player(const char *path, std::pair <double, double> p);
     std::pair <double, double> pos, mov;
     std::pair <int, int> size;
